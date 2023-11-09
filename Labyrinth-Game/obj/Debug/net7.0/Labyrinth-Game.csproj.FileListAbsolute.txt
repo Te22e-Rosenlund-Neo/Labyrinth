@@ -1,0 +1,14 @@
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\bin\Debug\net7.0\Labyrinth-Game.exe
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\bin\Debug\net7.0\Labyrinth-Game.deps.json
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\bin\Debug\net7.0\Labyrinth-Game.runtimeconfig.json
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\bin\Debug\net7.0\Labyrinth-Game.dll
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\bin\Debug\net7.0\Labyrinth-Game.pdb
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\obj\Debug\net7.0\Labyrinth-Game.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\obj\Debug\net7.0\Labyrinth-Game.AssemblyInfoInputs.cache
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\obj\Debug\net7.0\Labyrinth-Game.AssemblyInfo.cs
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\obj\Debug\net7.0\Labyrinth-Game.csproj.CoreCompileInputs.cache
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\obj\Debug\net7.0\Labyrinth-Game.dll
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\obj\Debug\net7.0\refint\Labyrinth-Game.dll
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\obj\Debug\net7.0\Labyrinth-Game.pdb
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\obj\Debug\net7.0\Labyrinth-Game.genruntimeconfig.cache
+C:\Users\neo.rosenlund\Documents\programmering-betyguppgift\Labyrinth\Labyrinth-Game\obj\Debug\net7.0\ref\Labyrinth-Game.dll
