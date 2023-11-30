@@ -23,19 +23,10 @@ public Rooms(bool Door1, bool Door2, bool Door3, bool Door4, int RoomClearanceLv
 
 
 
-
-
-
-
-
-
-
-
-
 public void RoomDescription(){
 
     Console.WriteLine($"You Entered {RoomsName}");
-    Console.WriteLine(@"			Top Rooms
+    Console.WriteLine(@"			top room
 
 
 
