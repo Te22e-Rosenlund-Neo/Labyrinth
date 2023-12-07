@@ -1,10 +1,8 @@
 class Items{
 
-string ItemType;
 int clearanceLVL;
 
-    Items(string Name, int clearanceLVL){
-        ItemType = Name;
+    public Items(int clearanceLVL){
         this.clearanceLVL = clearanceLVL;
     }
 
