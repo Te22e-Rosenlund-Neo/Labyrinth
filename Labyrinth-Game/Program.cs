@@ -73,28 +73,28 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
     static Rooms[,] SpawnRoomsBeside(Rooms[,] RoomArea, Rooms[][] Clearances, int Xpos, int Ypos, int Clearance){
 
-        if(RoomArea[Xpos+1, Ypos] != null && RoomsExist(Xpos + 1, Ypos, RoomArea)){
+        if(RoomArea[Xpos+1, Ypos] == null && RoomsExist(Xpos + 1, Ypos, RoomArea)){
             //returns either 1 or -1
             int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1; 
             int NewClearance = Clearance + ClearanceNext;
             RoomArea[Xpos+1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos+1, Ypos, NewClearance);
         }
-       if(RoomArea[Xpos-1, Ypos] != null && RoomsExist(Xpos-1, Ypos, RoomArea)){
+       if(RoomArea[Xpos-1, Ypos] == null && RoomsExist(Xpos-1, Ypos, RoomArea)){
             //returns either 1 or -1
             int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1;
             int NewClearance = Clearance + ClearanceNext;
             RoomArea[Xpos-1, Ypos] = Clearances[ClearanceNext][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos+1, Ypos, NewClearance); 
         } 
-       if(RoomArea[Xpos, Ypos+1] != null && RoomsExist(Xpos, Ypos+1, RoomArea)){
+       if(RoomArea[Xpos, Ypos+1] == null && RoomsExist(Xpos, Ypos+1, RoomArea)){
             //returns either 1 or -1
             int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1;
             int NewClearance = Clearance + ClearanceNext;
             RoomArea[Xpos, Ypos+1] = Clearances[ClearanceNext][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos, Ypos+1, NewClearance); 
         } 
-       if(RoomArea[Xpos, Ypos-1] != null && RoomsExist(Xpos, Ypos-1, RoomArea)){
+       if(RoomArea[Xpos, Ypos-1] == null && RoomsExist(Xpos, Ypos-1, RoomArea)){
             //returns either 1 or -1
             int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1;
             int NewClearance = Clearance + ClearanceNext;
