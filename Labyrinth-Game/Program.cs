@@ -50,7 +50,7 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     RoomArea = SpawnRoomsBetween(PathX, PathY, Start1, Start2, RoomArea, Clearances);
     RoomArea = SpawnRoomsBeside(RoomArea, Clearances, Start1, Start2, 0);
 
-///FOR ROOM CLEARANCE  = 0 IT WONT WORK!!!!!!!!
+
 
 
 
@@ -72,6 +72,22 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     }
 
     static Rooms[,] SpawnRoomsBeside(Rooms[,] RoomArea, Rooms[][] Clearances, int Xpos, int Ypos, int Clearance){
+
+        if(Clearance == 0){
+            int NewClearance = Clearance + 1;
+            if(RoomArea[Xpos+1, Ypos]==null && RoomsExist(Xpos+1,Ypos, RoomArea)){
+                RoomArea[Xpos+1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
+            }
+            if(RoomArea[Xpos-1, Ypos]==null && RoomsExist(Xpos-1,Ypos, RoomArea)){
+                RoomArea[Xpos-1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
+            }
+            if(RoomArea[Xpos, Ypos+1]==null && RoomsExist(Xpos,Ypos+1, RoomArea)){
+                RoomArea[Xpos, Ypos+1] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
+            }
+            if(RoomArea[Xpos, Ypos-1]==null && RoomsExist(Xpos,Ypos-1, RoomArea)){
+                RoomArea[Xpos, Ypos-1] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
+            }
+        }else{
 
         if(RoomArea[Xpos+1, Ypos] == null && RoomsExist(Xpos + 1, Ypos, RoomArea)){
             //returns either 1 or -1
@@ -101,11 +117,8 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
             RoomArea[Xpos, Ypos-1] = Clearances[ClearanceNext][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos, Ypos-1, NewClearance); 
         } 
-        
+        }
         return RoomArea;
-
-
-
     }
 
 
