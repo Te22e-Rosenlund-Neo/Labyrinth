@@ -3,25 +3,24 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 
 class Rooms{
-
- string RoomsName;
-bool escapable;
+public string RoomsName;
 public int RoomClearanceLvl;
 //up left down right
 
 
 
-bool Collapsed = false;
 
 
-public Rooms(int RoomClearanceLvl){
+public Rooms(int RoomClearanceLvl, string name){
     
     this.RoomClearanceLvl = RoomClearanceLvl;
+    RoomsName = name;
 }
 
 
 
-public void RoomDescription(){
+
+public static void RoomDescription(string RoomsName){
 
     Console.WriteLine($"You Entered {RoomsName}");
     Console.WriteLine(@"			top room

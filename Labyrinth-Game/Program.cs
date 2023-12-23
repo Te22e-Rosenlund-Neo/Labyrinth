@@ -4,28 +4,27 @@ using System.Security.AccessControl;
 Rooms[,] RoomArea = new Rooms[7,7];
 Random Rgen = new();
 
-Rooms Start = new(0);    
-Rooms Corridor = new(0); 
-Rooms[] Clearance0 = { Start ,Corridor};
+Rooms Start = new(0, "Start");    
+Rooms Corridor = new(0,"Corridor"); 
+Rooms[] Clearance0 = {Corridor};
 
-Rooms Kitchen = new(1); 
-Rooms Bedroom = new(1); 
-Rooms BathingHall = new(1); 
-Rooms Library = new(1); 
+Rooms Kitchen = new(1,"Kitchen"); 
+Rooms Bedroom = new(1,"Bedroom"); 
+Rooms BathingHall = new(1,"BathingHall"); 
+Rooms Library = new(1,"Library"); 
 Rooms[] Clearance1 = {Kitchen, Bedroom, BathingHall, Library};
 
-Rooms TortureChamber = new(2); 
-Rooms MainHall = new(2); 
-Rooms BathRoom = new(2); 
+Rooms TortureChamber = new(2,"TortureChamber"); 
+Rooms MainHall = new(2,"MainHall"); 
+Rooms BathRoom = new(2,"BathRoom"); 
 Rooms[] Clearance2 = {TortureChamber, MainHall, BathRoom};
 
-Rooms Garden = new(3); // 1 openings EXIT
+Rooms Garden = new(3,"Garden"); // 1 openings EXIT
 Rooms[] Final = {Garden};
 
 Rooms[][] Clearances = {Clearance0, Clearance1, Clearance2, Final};
-bool[,] Visited = new bool[15, 15];
 
-
+Main(RoomArea, Start, Garden, Clearances);
 
 static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances){
 
@@ -44,13 +43,20 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
     RoomArea[Start1, Start2] = Start;
     RoomArea[Exit1, Exit2] = Exit;
-    //path calculates how we way from start to exit, 
+    
+    //path calculates the  way from start to exit, 
     int PathX = Exit1 - Start1;
     int PathY = Exit2 - Start2;
     RoomArea = SpawnRoomsBetween(PathX, PathY, Start1, Start2, RoomArea, Clearances);
     RoomArea = SpawnRoomsBeside(RoomArea, Clearances, Start1, Start2, 0);
 
-
+    for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
+        for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
+            Console.Write($"{RoomArea[Xcolumn, Ycolumn].RoomClearanceLvl} ");
+        }
+            Console.WriteLine();
+    }
+    Console.ReadKey();
 
 
 
@@ -71,54 +77,69 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
          return RoomArea;
     }
 
+
+
     static Rooms[,] SpawnRoomsBeside(Rooms[,] RoomArea, Rooms[][] Clearances, int Xpos, int Ypos, int Clearance){
 
         if(Clearance == 0){
             int NewClearance = Clearance + 1;
-            if(RoomArea[Xpos+1, Ypos]==null && RoomsExist(Xpos+1,Ypos, RoomArea)){
+            if(RoomsExist(Xpos+1,Ypos, RoomArea)){
+            if(RoomArea[Xpos+1, Ypos]==null){
                 RoomArea[Xpos+1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
-            }
-            if(RoomArea[Xpos-1, Ypos]==null && RoomsExist(Xpos-1,Ypos, RoomArea)){
+                SpawnRoomsBeside(RoomArea, Clearances, Xpos+1, Ypos, NewClearance);
+            }}
+            if(RoomsExist(Xpos-1, Ypos, RoomArea)){
+            if(RoomArea[Xpos-1, Ypos]==null){
                 RoomArea[Xpos-1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
-            }
-            if(RoomArea[Xpos, Ypos+1]==null && RoomsExist(Xpos,Ypos+1, RoomArea)){
+            SpawnRoomsBeside(RoomArea, Clearances, Xpos-1, Ypos, NewClearance);
+            }}
+            if(RoomsExist(Xpos, Ypos+1, RoomArea)){
+            if(RoomArea[Xpos, Ypos+1]==null){
                 RoomArea[Xpos, Ypos+1] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
-            }
-            if(RoomArea[Xpos, Ypos-1]==null && RoomsExist(Xpos,Ypos-1, RoomArea)){
+                SpawnRoomsBeside(RoomArea, Clearances, Xpos, Ypos+1, NewClearance);
+            }}
+            if(RoomsExist(Xpos, Ypos-1, RoomArea)){
+            if(RoomArea[Xpos, Ypos-1]==null){
                 RoomArea[Xpos, Ypos-1] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
-            }
+                SpawnRoomsBeside(RoomArea, Clearances, Xpos-1, Ypos, NewClearance);
+            }}
+            return RoomArea;
         }else{
-
-        if(RoomArea[Xpos+1, Ypos] == null && RoomsExist(Xpos + 1, Ypos, RoomArea)){
+            if(RoomsExist(Xpos + 1, Ypos, RoomArea)){
+        if(RoomArea[Xpos+1, Ypos] == null){
             //returns either 1 or -1
             int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1; 
             int NewClearance = Clearance + ClearanceNext;
             RoomArea[Xpos+1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos+1, Ypos, NewClearance);
-        }
-       if(RoomArea[Xpos-1, Ypos] == null && RoomsExist(Xpos-1, Ypos, RoomArea)){
+        }}
+        if(RoomsExist(Xpos-1, Ypos, RoomArea)){
+       if(RoomArea[Xpos-1, Ypos] == null){
             //returns either 1 or -1
             int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1;
             int NewClearance = Clearance + ClearanceNext;
-            RoomArea[Xpos-1, Ypos] = Clearances[ClearanceNext][Random.Shared.Next(0, Clearances[NewClearance].Length)];
+            RoomArea[Xpos-1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos+1, Ypos, NewClearance); 
-        } 
-       if(RoomArea[Xpos, Ypos+1] == null && RoomsExist(Xpos, Ypos+1, RoomArea)){
+        } }
+        if(RoomsExist(Xpos, Ypos+1, RoomArea)){
+       if(RoomArea[Xpos, Ypos+1] == null){
             //returns either 1 or -1
             int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1;
             int NewClearance = Clearance + ClearanceNext;
-            RoomArea[Xpos, Ypos+1] = Clearances[ClearanceNext][Random.Shared.Next(0, Clearances[NewClearance].Length)];
+            RoomArea[Xpos, Ypos+1] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos, Ypos+1, NewClearance); 
-        } 
-       if(RoomArea[Xpos, Ypos-1] == null && RoomsExist(Xpos, Ypos-1, RoomArea)){
+        } }
+        if(RoomsExist(Xpos, Ypos-1, RoomArea)){
+       if(RoomArea[Xpos, Ypos-1] == null){
             //returns either 1 or -1
             int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1;
             int NewClearance = Clearance + ClearanceNext;
-            RoomArea[Xpos, Ypos-1] = Clearances[ClearanceNext][Random.Shared.Next(0, Clearances[NewClearance].Length)];
+            RoomArea[Xpos, Ypos-1] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos, Ypos-1, NewClearance); 
         } 
         }
         return RoomArea;
+    }
     }
 
 
@@ -129,10 +150,10 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 //tests if the designated room is possible inside of the array (AKA not ArrayOutOfBoundsException)
 
 static bool RoomsExist(int x, int y, Rooms[,] RoomArea){
-if(x > RoomArea.GetLength(0) || x < 0 || y > RoomArea.GetLength(1) || y < 0){
-    return false;
-}else{
+if(x >= 0 && x < RoomArea.GetLength(0) && y >= 0 && y < RoomArea.GetLength(1)){
     return true;
+}else{
+    return false;
 }
 }
 
@@ -140,5 +161,5 @@ if(x > RoomArea.GetLength(0) || x < 0 || y > RoomArea.GetLength(1) || y < 0){
 
 
 
-Console.ReadKey();
+
 
