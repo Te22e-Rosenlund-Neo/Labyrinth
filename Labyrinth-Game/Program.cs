@@ -52,7 +52,7 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
     for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
         for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
-            Console.Write($"{RoomArea[Xcolumn, Ycolumn].RoomClearanceLvl} ");
+            Console.Write($"{RoomArea[Xcolumn, Ycolumn].RoomsName} ");
         }
             Console.WriteLine();
     }
@@ -81,66 +81,66 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
     static Rooms[,] SpawnRoomsBeside(Rooms[,] RoomArea, Rooms[][] Clearances, int Xpos, int Ypos, int Clearance){
 
-        if(Clearance == 0){
-            int NewClearance = Clearance + 1;
-            if(RoomsExist(Xpos+1,Ypos, RoomArea)){
-            if(RoomArea[Xpos+1, Ypos]==null){
-                RoomArea[Xpos+1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
-                SpawnRoomsBeside(RoomArea, Clearances, Xpos+1, Ypos, NewClearance);
-            }}
-            if(RoomsExist(Xpos-1, Ypos, RoomArea)){
-            if(RoomArea[Xpos-1, Ypos]==null){
-                RoomArea[Xpos-1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
-            SpawnRoomsBeside(RoomArea, Clearances, Xpos-1, Ypos, NewClearance);
-            }}
-            if(RoomsExist(Xpos, Ypos+1, RoomArea)){
-            if(RoomArea[Xpos, Ypos+1]==null){
-                RoomArea[Xpos, Ypos+1] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
-                SpawnRoomsBeside(RoomArea, Clearances, Xpos, Ypos+1, NewClearance);
-            }}
-            if(RoomsExist(Xpos, Ypos-1, RoomArea)){
-            if(RoomArea[Xpos, Ypos-1]==null){
-                RoomArea[Xpos, Ypos-1] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
-                SpawnRoomsBeside(RoomArea, Clearances, Xpos-1, Ypos, NewClearance);
-            }}
-            return RoomArea;
-        }else{
+        // if(Clearance == 0){
+
+        //     if(RoomsExist(Xpos+1,Ypos, RoomArea)){
+        //     if(RoomArea[Xpos+1, Ypos]==null){
+        //         RoomArea[Xpos+1, Ypos] = Clearances[1][Random.Shared.Next(0, Clearances[1].Length)];
+        //         SpawnRoomsBeside(RoomArea, Clearances, Xpos+1, Ypos, 1);
+        //     }}
+        //     if(RoomsExist(Xpos-1, Ypos, RoomArea)){
+        //     if(RoomArea[Xpos-1, Ypos]==null){
+        //         RoomArea[Xpos-1, Ypos] = Clearances[1][Random.Shared.Next(0, Clearances[1].Length)];
+        //     SpawnRoomsBeside(RoomArea, Clearances, Xpos-1, Ypos, 1);
+        //     }}
+        //     if(RoomsExist(Xpos, Ypos+1, RoomArea)){
+        //     if(RoomArea[Xpos, Ypos+1]==null){
+        //         RoomArea[Xpos, Ypos+1] = Clearances[1][Random.Shared.Next(0, Clearances[1].Length)];
+        //         SpawnRoomsBeside(RoomArea, Clearances, Xpos, Ypos+1, 1);
+        //     }}
+        //     if(RoomsExist(Xpos, Ypos-1, RoomArea)){
+        //     if(RoomArea[Xpos, Ypos-1]==null){
+        //         RoomArea[Xpos, Ypos-1] = Clearances[1][Random.Shared.Next(0, Clearances[1].Length)];
+        //         SpawnRoomsBeside(RoomArea, Clearances, Xpos-1, Ypos, 1);
+        //     }}
+        //     return RoomArea;
+        // }else{
             if(RoomsExist(Xpos + 1, Ypos, RoomArea)){
         if(RoomArea[Xpos+1, Ypos] == null){
             //returns either 1 or -1
-            int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1; 
-            int NewClearance = Clearance + ClearanceNext;
+            int ClearanceNext = Random.Shared.Next(0,2) * 2 - 1; 
+            int NewClearance = ClearanceCheck(Clearance + ClearanceNext, Clearances);
             RoomArea[Xpos+1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos+1, Ypos, NewClearance);
         }}
         if(RoomsExist(Xpos-1, Ypos, RoomArea)){
        if(RoomArea[Xpos-1, Ypos] == null){
             //returns either 1 or -1
-            int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1;
-            int NewClearance = Clearance + ClearanceNext;
+            int ClearanceNext = Random.Shared.Next(0,2) * 2 - 1;
+            int NewClearance = ClearanceCheck(Clearance + ClearanceNext, Clearances);
             RoomArea[Xpos-1, Ypos] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos+1, Ypos, NewClearance); 
         } }
         if(RoomsExist(Xpos, Ypos+1, RoomArea)){
        if(RoomArea[Xpos, Ypos+1] == null){
             //returns either 1 or -1
-            int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1;
-            int NewClearance = Clearance + ClearanceNext;
+            int ClearanceNext = Random.Shared.Next(0,2) * 2 - 1;
+            int NewClearance = ClearanceCheck(Clearance + ClearanceNext, Clearances);
             RoomArea[Xpos, Ypos+1] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos, Ypos+1, NewClearance); 
         } }
         if(RoomsExist(Xpos, Ypos-1, RoomArea)){
        if(RoomArea[Xpos, Ypos-1] == null){
             //returns either 1 or -1
-            int ClearanceNext = Random.Shared.Next(0,1) * 2 - 1;
-            int NewClearance = Clearance + ClearanceNext;
+            int ClearanceNext = Random.Shared.Next(0,2) * 2 - 1;
+            int NewClearance = ClearanceCheck(Clearance + ClearanceNext, Clearances);
             RoomArea[Xpos, Ypos-1] = Clearances[NewClearance][Random.Shared.Next(0, Clearances[NewClearance].Length)];
             SpawnRoomsBeside(RoomArea, Clearances, Xpos, Ypos-1, NewClearance); 
         } 
         }
         return RoomArea;
     }
-    }
+    //}
 
 
 
@@ -155,6 +155,18 @@ if(x >= 0 && x < RoomArea.GetLength(0) && y >= 0 && y < RoomArea.GetLength(1)){
 }else{
     return false;
 }
+}
+static int ClearanceCheck(int clearancelevel, Rooms[][] Clearances){
+
+    if(clearancelevel > Clearances.Length){
+        return clearancelevel - 2;
+
+    }else if(clearancelevel < 0){
+        return clearancelevel + 1;
+
+    }else{
+        return clearancelevel;
+    }
 }
 
 
