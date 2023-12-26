@@ -1,7 +1,9 @@
-﻿Rooms[,] RoomArea = new Rooms[7,7];
+﻿//RoomArea is an array which houses our playing field, visisted is for bug/generation bug fixes
+Rooms[,] RoomArea = new Rooms[7,7];
 bool[,] visited = new bool[7,7];
-Random Rgen = new();
 
+//here we declare a bunch of objects of type rooms that we later randomize from
+//first parameter is the clearance level, which the player needs a key corresponding to the same clearance level to access
 Rooms Start = new(-1, "Start");    
 Rooms Corridor = new(0,"Corridor"); 
 Rooms[] Clearance0 = {Corridor};
@@ -17,21 +19,22 @@ Rooms MainHall = new(2,"MainHall");
 Rooms BathRoom = new(2,"BathRoom"); 
 Rooms[] Clearance2 = {TortureChamber, MainHall, BathRoom};
 
-Rooms Garden = new(3,"Garden"); // 1 openings EXIT
-Rooms[] Final = {Garden};
-
+Rooms Garden = new(3,"Garden"); 
+//this array lets us randomly pick one of the 3 types of rooms to randomly generate
 Rooms[][] Clearances = {Clearance0, Clearance1, Clearance2};
 
 
 
-
+//our main method, from here all methods are called
 Main(RoomArea, Start, Garden, Clearances, visited);
 static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances, bool[,] visited){
 
+    //key corresponds to what rooms player can enter
     Items KeyOne = new Items(1);
     Items KeyTwo = new Items(2);
     Items ExitKey = new Items(3);
 
+//creates start and exit rooms on random coordinates that can never be the same
     int Start1 = Random.Shared.Next(0, RoomArea.GetLength(0));
     int Start2 = Random.Shared.Next(0, RoomArea.GetLength(1));
     int Exit1 = Start1;
@@ -46,12 +49,12 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     RoomArea[Exit1, Exit2] = Exit;
     visited[Exit1, Exit2] = true;
 
+    // 2 method calls which generates all spots on our playing field 
     RoomArea = SpawnRoomsBetween(Exit1, Exit2, Start1, Start2, RoomArea, Clearances, visited);
-    //RoomArea = SpawnRoomsBeside(RoomArea, Clearances, Start1, Start2, 0, visited);
-     RoomArea = SetNullRoom(RoomArea, Clearances, visited);
+    RoomArea = SpawnRoomsBeside(RoomArea, Clearances, Start1, Start2, 0, visited);
 
 
-
+    //writes a output that shows if all positions in roomarea is visited
      for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
         for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
             Console.Write($"{visited[Xcolumn, Ycolumn]} ");
@@ -62,6 +65,7 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
        Console.WriteLine("");
 
+//prints out all rooms for dev to see
     for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
         for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
             Console.Write($"{RoomArea[Xcolumn, Ycolumn].RoomClearanceLvl} ");
@@ -77,10 +81,12 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
        int currentX = StartX;
        int currentY = StartY;
+    //this list holds tuples. this holds a tuple for each position between start and exit in which needs a garuanteed clearance level so that the maze is always escapeable
+    //I used a list instead of an array here because the size of our list will vary depending on the amount of positions between start and exit.
        List<(int, int)> path = new List<(int, int)>();
 
     
-
+//here we add all the positions that needs a room for a garuanteed pathway
         while(currentX != ExitX){
             currentX += MathF.Sign(ExitX - currentX);
             path.Add((currentX, currentY));
@@ -89,7 +95,7 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
             currentY += MathF.Sign(ExitY - currentY);
             path.Add((currentX,currentY));
         }
-
+    //bool doOnce makes the first connected room be garuanteed a 1, after that they become 2's
         bool DoOnce = true;
         foreach(var position in path){
             int x = position.Item1;
@@ -114,9 +120,11 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
 
 
-
+//spawns all the rest of the rooms in a procedural generation, where the rooms besides depends on a number of variables
     static Rooms[,] SpawnRoomsBeside(Rooms[,] RoomArea, Rooms[][] Clearances, int Xpos, int Ypos, int Clearance, bool[,] visited){
 
+//these checks if the adjacent tile is existing, does not already have a value, and then generates a random room according to the clearances that surrounds it
+//Clearancecheck makes sure that the next clearance for the room is possible. (not array out of bounds) 
             if(RoomsExist(Xpos + 1, Ypos, RoomArea)){
         if(RoomArea[Xpos+1, Ypos] == null){
             //returns either 1 or -1
@@ -172,6 +180,8 @@ if(x >= 0 && x < RoomArea.GetLength(0) && y >= 0 && y < RoomArea.GetLength(1)){
     return false;
 }
 }
+
+//checks if designated clearance level exists inside clearances array.
 static int ClearanceCheck(int clearancelevel, Rooms[][] Clearances){
 
     if(clearancelevel > Clearances.Length-1){
@@ -184,19 +194,7 @@ static int ClearanceCheck(int clearancelevel, Rooms[][] Clearances){
         return clearancelevel;
     }
 }
-static Rooms[,] SetNullRoom(Rooms[,] RoomArea, Rooms[][] Clearances, bool[,] visited){
 
-    for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
-        for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
-            if(RoomArea[Xcolumn,Ycolumn] == null){
-                RoomArea[Xcolumn, Ycolumn] = Clearances[0][0];
-            }
-        }
-    }
-
-return RoomArea;
-
-}
 
 
 
