@@ -79,16 +79,17 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
        int currentY = StartY;
        List<(int, int)> path = new List<(int, int)>();
 
-        while(currentX != ExitX || currentY != ExitY){
-            if(currentX != ExitX){
-                currentX += MathF.Sign(ExitX - currentX);
-                
-            }
-            if(currentY != ExitY){
-                currentY += MathF.Sign(ExitX - currentY);
-            }
+    
+
+        while(currentX != ExitX){
+            currentX += MathF.Sign(ExitX - currentX);
+            path.Add((currentX, currentY));
+        }
+        while(currentY != ExitY){
+            currentY += MathF.Sign(ExitY - currentY);
             path.Add((currentX,currentY));
         }
+
         bool DoOnce = true;
         foreach(var position in path){
             int x = position.Item1;
@@ -100,17 +101,16 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
                     
                     RoomArea[x,y] = RoomArea[x, y] = Clearances[1][Random.Shared.Next(0, Clearances[1].Length)];
                     visited[x, y] = true;
-                    DoOnce = false;
-                    
+                    DoOnce = false;          
             } else {
                 RoomArea[x, y] = Clearances[2][Random.Shared.Next(0, Clearances[2].Length)];
                  visited[x, y] = true;
                 }
             }
-}
+    }
     return RoomArea;
 
-    }
+}
 
 
 
