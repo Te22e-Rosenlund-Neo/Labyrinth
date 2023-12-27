@@ -23,7 +23,7 @@ Rooms Garden = new(3,"Garden");
 //this array lets us randomly pick one of the 3 types of rooms to randomly generate
 Rooms[][] Clearances = {Clearance0, Clearance1, Clearance2};
 
-
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //our main method, from here all methods are called
 Main(RoomArea, Start, Garden, Clearances, visited);
@@ -76,12 +76,13 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
  Console.ReadKey();
 
 }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     	//Spawns a path of rooms between Start and Exit
     static Rooms[,] SpawnRoomsBetween(int ExitX, int ExitY, int StartX, int StartY , Rooms[,] RoomArea, Rooms[][]Clearances, bool[,] visited){
 
        int currentX = StartX;
        int currentY = StartY;
-    //this list holds tuples. this holds a tuple for each position between start and exit in which needs a garuanteed clearance level so that the maze is always escapeable
+    //this list holds a tuple for each position between start and exit in which needs a garuanteed clearance level so that the maze is always escapeable
     //I used a list instead of an array here because the size of our list will vary depending on the amount of positions between start and exit.
        List<(int, int)> path = new List<(int, int)>();
 
@@ -119,7 +120,7 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 }
 
 
-
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //spawns all the rest of the rooms in a procedural generation, where the rooms besides depends on a number of variables
     static Rooms[,] SpawnRoomsBeside(Rooms[,] RoomArea, Rooms[][] Clearances, int Xpos, int Ypos, int Clearance, bool[,] visited){
 
@@ -170,7 +171,7 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
 
 
-
+//-------------------------------------------------------------------------------------------------------------------------
 //tests if the designated room is possible inside of the array (AKA not ArrayOutOfBoundsException)
 
 static bool RoomsExist(int x, int y, Rooms[,] RoomArea){
@@ -180,7 +181,7 @@ if(x >= 0 && x < RoomArea.GetLength(0) && y >= 0 && y < RoomArea.GetLength(1)){
     return false;
 }
 }
-
+//-------------------------------------------------------------------------------------------------------------------------
 //checks if designated clearance level exists inside clearances array.
 static int ClearanceCheck(int clearancelevel, Rooms[][] Clearances){
 
@@ -194,11 +195,59 @@ static int ClearanceCheck(int clearancelevel, Rooms[][] Clearances){
         return clearancelevel;
     }
 }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+static void DisplayRooms(){
+
+Console.WriteLine($"                 Top Room                ");
+Console.WriteLine($"LeftRoom          ٩(̾●̮̮̃̾•̃̾)۶        RightRoom");
+Console.WriteLine($"                 BottomROom               ");
 
 
 
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+static (int, int) MoveCheck(){
 
+    string move = InputCheck();
 
+    if(move == "W"){
+        var Movement = (-1, 0);
+        return Movement;
+
+    }else if(move == "A"){
+        var Movement = (0, -1);
+        return Movement;
+
+    }else if(move == "S"){
+        var Movement = (1, 0);
+        return Movement;
+
+    }else if(move == "D"){
+        var Movement = (0, 1);
+        return Movement;
+
+    }else{
+        return (0,0);
+    }
+
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+static void CurrentPlace(int StartPos1, int StartPos2, Rooms[,] RoomArea){
+
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+static string InputCheck(){
+    string[] InputType = {"W","A","S","D"};
+    string Input;
+
+    do{
+        Console.WriteLine("Press a key to move (W, A, S, D)");
+        Input = Console.ReadLine().ToUpper();
+
+    } while(!InputType.Contains(Input));
+
+return Input;
+}
 
 
 
