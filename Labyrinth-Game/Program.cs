@@ -2,7 +2,7 @@
 //RoomArea is an array which houses our playing field, visisted is for bug/generation bug fixes
 Rooms[,] RoomArea = new Rooms[7,7];
 bool[,] visited = new bool[7,7];
-bool[,] CurrentMoveHolder = new bool[7,7];
+Items[,] KeyLocations = new Items[7,7];
 
 //here we declare a bunch of objects of type rooms that we later randomize from
 //first parameter is the clearance level, which the player needs a key corresponding to the same clearance level to access
@@ -28,23 +28,39 @@ Rooms[][] Clearances = {Clearance0, Clearance1, Clearance2};
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //our main method, from here all methods are called
-Main(RoomArea, Start, Garden, Clearances, visited);
-static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances, bool[,] visited){
+Main(RoomArea, Start, Garden, Clearances, visited, KeyLocations);
+static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances, bool[,] visited, Items[,] KeyLocations){
 
     //key corresponds to what rooms player can enter
     Items KeyOne = new Items(1);
     Items KeyTwo = new Items(2);
     Items ExitKey = new Items(3);
 
+
+
+
     var Create = RoomCreater(Start, Exit, RoomArea, Clearances, visited);
     RoomArea = Create.Item1;
-    int Start1 = Create.Item2;
-    int Start2 = Create.Item3;
+    int CurrentPos1 = Create.Item2;
+    int CurrentPos2 = Create.Item3;
 
-    DisplayRooms(RoomArea, Start1, Start2);
+    DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
+    bool Play = true;
+    int CurrentClearance = 0;
+    
+    while(Play == true){
+        Console.Clear();
+        DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
 
+        var Move = MoveCheck();
+        CurrentPos1 += Move.Item1;
+        CurrentPos2 += Move.Item2;
 
-
+        //check if Movement is possible (Key, outside array)
+        //does designated movetile contain a key?
+        //is it a win?
+        
+    }
 
 
 
@@ -224,11 +240,11 @@ static int ClearanceCheck(int clearancelevel, Rooms[][] Clearances){
 static void DisplayRooms(Rooms[,] RoomArea, int p1, int p2){
 
 try{
-    Console.WriteLine("                 " + RoomArea[p1-1,p2].RoomsName);
+    Console.WriteLine("               " + RoomArea[p1-1,p2].RoomsName);
     Console.Write(RoomArea[p1,p2-1].RoomsName);
     Console.Write("     ⚫     ");
     Console.WriteLine(RoomArea[p1,p2+1].RoomsName);
-    Console.WriteLine("                 " + RoomArea[p1+1,p2].RoomsName);
+    Console.WriteLine("               " + RoomArea[p1+1,p2].RoomsName);
 }catch(IndexOutOfRangeException){
     //does nothing, that exact statement will be skipped.
 }
