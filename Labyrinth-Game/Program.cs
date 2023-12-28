@@ -1,6 +1,8 @@
-﻿//RoomArea is an array which houses our playing field, visisted is for bug/generation bug fixes
+﻿Console.OutputEncoding = System.Text.Encoding.UTF8;
+//RoomArea is an array which houses our playing field, visisted is for bug/generation bug fixes
 Rooms[,] RoomArea = new Rooms[7,7];
 bool[,] visited = new bool[7,7];
+bool[,] CurrentMoveHolder = new bool[7,7];
 
 //here we declare a bunch of objects of type rooms that we later randomize from
 //first parameter is the clearance level, which the player needs a key corresponding to the same clearance level to access
@@ -34,6 +36,49 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     Items KeyTwo = new Items(2);
     Items ExitKey = new Items(3);
 
+    var Create = RoomCreater(Start, Exit, RoomArea, Clearances, visited);
+    RoomArea = Create.Item1;
+    int Start1 = Create.Item2;
+    int Start2 = Create.Item3;
+
+    DisplayRooms(RoomArea, Start1, Start2);
+
+
+
+
+
+
+
+
+
+
+
+
+
+//     //writes a output that shows if all positions in roomarea is visited
+//      for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
+//         for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
+//             Console.Write($"{visited[Xcolumn, Ycolumn]} ");
+//         }
+//             Console.WriteLine();
+//     }
+   
+
+//        Console.WriteLine("");
+
+// //prints out all rooms for dev to see
+//     for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
+//         for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
+//             Console.Write($"{RoomArea[Xcolumn, Ycolumn].RoomClearanceLvl} ");
+//         }
+//             Console.WriteLine();
+//     }
+ 
+ Console.ReadKey();
+
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+static (Rooms[,], int, int) RoomCreater(Rooms Start, Rooms Exit, Rooms[,] RoomArea, Rooms[][] Clearances, bool[,] visited){
 //creates start and exit rooms on random coordinates that can never be the same
     int Start1 = Random.Shared.Next(0, RoomArea.GetLength(0));
     int Start2 = Random.Shared.Next(0, RoomArea.GetLength(1));
@@ -52,29 +97,9 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     // 2 method calls which generates all spots on our playing field 
     RoomArea = SpawnRoomsBetween(Exit1, Exit2, Start1, Start2, RoomArea, Clearances, visited);
     RoomArea = SpawnRoomsBeside(RoomArea, Clearances, Start1, Start2, 0, visited);
-
-
-    //writes a output that shows if all positions in roomarea is visited
-     for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
-        for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
-            Console.Write($"{visited[Xcolumn, Ycolumn]} ");
-        }
-            Console.WriteLine();
-    }
-   
-
-       Console.WriteLine("");
-
-//prints out all rooms for dev to see
-    for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
-        for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
-            Console.Write($"{RoomArea[Xcolumn, Ycolumn].RoomClearanceLvl} ");
-        }
-            Console.WriteLine();
-    }
- 
- Console.ReadKey();
-
+    
+    var R = (RoomArea, Start1, Start2);
+    return R;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     	//Spawns a path of rooms between Start and Exit
@@ -196,15 +221,19 @@ static int ClearanceCheck(int clearancelevel, Rooms[][] Clearances){
     }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-static void DisplayRooms(){
+static void DisplayRooms(Rooms[,] RoomArea, int p1, int p2){
 
-Console.WriteLine($"                 Top Room                ");
-Console.WriteLine($"LeftRoom          ٩(̾●̮̮̃̾•̃̾)۶        RightRoom");
-Console.WriteLine($"                 BottomROom               ");
-
-
-
+try{
+    Console.WriteLine("                 " + RoomArea[p1-1,p2].RoomsName);
+    Console.Write(RoomArea[p1,p2-1].RoomsName);
+    Console.Write("     ⚫     ");
+    Console.WriteLine(RoomArea[p1,p2+1].RoomsName);
+    Console.WriteLine("                 " + RoomArea[p1+1,p2].RoomsName);
+}catch(IndexOutOfRangeException){
+    //does nothing, that exact statement will be skipped.
 }
+}
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 static (int, int) MoveCheck(){
 
@@ -232,17 +261,13 @@ static (int, int) MoveCheck(){
 
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-static void CurrentPlace(int StartPos1, int StartPos2, Rooms[,] RoomArea){
-
-}
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 static string InputCheck(){
     string[] InputType = {"W","A","S","D"};
-    string Input;
+    string Input = "";
 
     do{
         Console.WriteLine("Press a key to move (W, A, S, D)");
-        Input = Console.ReadLine().ToUpper();
+        Input = Console.ReadLine()!.ToUpper();
 
     } while(!InputType.Contains(Input));
 
