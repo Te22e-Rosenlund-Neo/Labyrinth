@@ -53,10 +53,20 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
         DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
 
         var Move = MoveCheck();
-        CurrentPos1 += Move.Item1;
-        CurrentPos2 += Move.Item2;
+        int MoveX = CurrentPos1 + Move.Item1;
+        int MoveY = CurrentPos2 + Move.Item2;
+        //both can be noted as true as only one changes, and therefor the other is the one we are currently on and does therefor exist!
+        if(RoomsExist( MoveX , CurrentPos2, RoomArea) == true && RoomsExist(CurrentPos1, MoveY, RoomArea) == true){
+            if(CurrentClearance >= RoomArea[MoveX, CurrentPos2].RoomClearanceLvl     &&  CurrentClearance >= RoomArea[CurrentPos1, MoveY].RoomClearanceLvl){
+                CurrentPos1 += Move.Item1;
+                CurrentPos2 += Move.Item2;
+            }else{
+                Console.WriteLine("You don't have the correct key to enter this room!");
+            }
+        }else{
+            Console.WriteLine("You cannot move this way!");
+        }
 
-        //check if Movement is possible (Key, outside array)
         //does designated movetile contain a key?
         //is it a win?
         
