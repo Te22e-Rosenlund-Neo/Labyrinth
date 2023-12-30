@@ -47,6 +47,8 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
     bool Play = true;
     int CurrentClearance = 0;
+
+    KeyLocations = SpawnKeys(KeyOne, KeyTwo, ExitKey, Create.Item2, Create.Item3, RoomArea, KeyLocations, Create.Item4, Create.Item5);
     
     while(Play == true){
         Console.Clear();
@@ -66,10 +68,19 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
         }else{
             ChangeColour("You cannot move this way!", "Red");
         }
-        KeyLocations = SpawnKeys(KeyOne, KeyTwo, ExitKey, Create.Item2, Create.Item3, RoomArea, KeyLocations, Create.Item4, Create.Item5);
-        //does designated movetile contain a key?
-        //is it a win?
         
+        if(KeyLocations[CurrentPos1, CurrentPos2] == KeyOne){
+            CurrentClearance = 1;
+        }else if(KeyLocations[CurrentPos1, CurrentPos2] == KeyTwo){
+            CurrentClearance = 2;
+        }else if(KeyLocations[CurrentPos1, CurrentPos2] == ExitKey){
+            CurrentClearance = 3;
+        }
+
+        if(RoomArea[CurrentPos1, CurrentPos2] == Exit){
+            ChangeColour("You Escaped!", "Green");
+            break;
+        }
     }
 
 
@@ -349,6 +360,8 @@ KeyLocations[RandlocX,RandlocY] = ExitKey;
 
 return KeyLocations;
 }
+
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 static (int, int)? FindPositions(int pos1, int pos2, int ClearanceToFind, Rooms[,] RoomArea){
     
