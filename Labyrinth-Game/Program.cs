@@ -61,12 +61,12 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
                 CurrentPos1 += Move.Item1;
                 CurrentPos2 += Move.Item2;
             }else{
-                Console.WriteLine("You don't have the correct key to enter this room!");
+                ChangeColour("You don't have the correct key to enter this room!", "Red");
             }
         }else{
-            Console.WriteLine("You cannot move this way!");
+            ChangeColour("You cannot move this way!", "Red");
         }
-
+        KeyLocations = SpawnKeys(KeyOne, KeyTwo, ExitKey, Create.Item2, Create.Item3, RoomArea, KeyLocations, Create.Item4, Create.Item5);
         //does designated movetile contain a key?
         //is it a win?
         
@@ -104,7 +104,7 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-static (Rooms[,], int, int) RoomCreater(Rooms Start, Rooms Exit, Rooms[,] RoomArea, Rooms[][] Clearances, bool[,] visited){
+static (Rooms[,], int, int, int, int) RoomCreater(Rooms Start, Rooms Exit, Rooms[,] RoomArea, Rooms[][] Clearances, bool[,] visited){
 //creates start and exit rooms on random coordinates that can never be the same
     int Start1 = Random.Shared.Next(0, RoomArea.GetLength(0));
     int Start2 = Random.Shared.Next(0, RoomArea.GetLength(1));
@@ -124,7 +124,7 @@ static (Rooms[,], int, int) RoomCreater(Rooms Start, Rooms Exit, Rooms[,] RoomAr
     RoomArea = SpawnRoomsBetween(Exit1, Exit2, Start1, Start2, RoomArea, Clearances, visited);
     RoomArea = SpawnRoomsBeside(RoomArea, Clearances, Start1, Start2, 0, visited);
     
-    var R = (RoomArea, Start1, Start2);
+    var R = (RoomArea, Start1, Start2, Exit1, Exit2);
     return R;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -299,6 +299,79 @@ static string InputCheck(){
 
 return Input;
 }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+static void ChangeColour(string Sentence, string Colour){
+if(Colour == "Red"){
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine(Sentence);
+    Console.ResetColor();
+}else if(Colour == "Green"){
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine(Sentence);
+    Console.ResetColor();
+}
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+static Items[,] SpawnKeys(Items KeyOne, Items KeyTwo, Items ExitKey, int Startpos1, int Startpos2, Rooms[,] RoomArea, Items[,] KeyLocations, int Exit1, int Exit2){
+    //one list for each key, as we have to call the next keys FindPositions() using its values
+List<(int, int)> Positions1 = new List<(int, int)>();
+List<(int, int)> Positions2 = new List<(int, int)>();
+List<(int, int)> Positions3 = new List<(int, int)>();
 
 
+//finds locations that the first key can spawn in, and randomizes its location
+Positions1.Add(FindPositions(Startpos1, Startpos2, 0, RoomArea)!.Value);
+Positions1.RemoveAt(0);                                                             //key 1
+int RandLoc1 = Random.Shared.Next(0, Positions1.Count);
+KeyLocations[Positions1[RandLoc1].Item1, Positions1[RandLoc1].Item2] = KeyOne;
 
+//calls a new findpositions for each value in positions1
+foreach(var pos in Positions1){
+    Positions2.Add(FindPositions(pos.Item1, pos.Item2, 1, RoomArea)!.Value);
+}
+//we then remove all incorrect values that have been added as a result of calling with a position with that does not contain clearance 1
+for(int i = 0; i <= Positions2.Count; i++){
+    if(RoomArea[Positions1[i].Item1, Positions1[i].Item2].RoomClearanceLvl == 0){
+        Positions1.RemoveAt(i);
+    }
+}
+int RandLoc2 = Random.Shared.Next(0, Positions1.Count);
+KeyLocations[Positions2[RandLoc2].Item1, Positions2[RandLoc2].Item2] = KeyTwo;                //key 2
+
+//by the player simply having all key one and key two, key 3 can therefor spawn completely ranom in the maze as the entire maze can now be explored (apart from the one exit room)
+int RandlocX, RandlocY;
+do{
+ RandlocX = Random.Shared.Next(0, RoomArea.GetLength(0));
+ RandlocY = Random.Shared.Next(0, RoomArea.GetLength(1));
+ //does that while those positions is at the keyone or keytwo position or whilst it is at the exit rooms coordinates
+}while((RandlocX == Positions1[RandLoc1].Item1 && RandlocY == Positions1[RandLoc1].Item2) || (RandlocX == Positions2[RandLoc2].Item1 && RandlocY == Positions1[RandLoc2].Item2) || (RandlocX == Exit1 && RandlocY == Exit2));
+KeyLocations[RandlocX,RandlocY] = ExitKey;
+
+return KeyLocations;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+static (int, int)? FindPositions(int pos1, int pos2, int ClearanceToFind, Rooms[,] RoomArea){
+    
+  if(RoomsExist(pos1 + 1, pos2, RoomArea) == true){
+    if(RoomArea[pos1 + 1, pos2].RoomClearanceLvl == ClearanceToFind){
+       FindPositions(pos1 + 1, pos2, 1, RoomArea);
+    }
+  }
+  if(RoomsExist(pos1 - 1, pos2, RoomArea) == true){
+    if(RoomArea[pos1 - 1, pos2].RoomClearanceLvl == ClearanceToFind){
+     FindPositions(pos1 - 1, pos2, 1, RoomArea);
+    }
+  }
+  if(RoomsExist(pos1, pos2 + 1, RoomArea) == true){
+    if(RoomArea[pos1, pos2 + 1].RoomClearanceLvl == ClearanceToFind){
+        FindPositions(pos1, pos2 + 1, 1, RoomArea);
+    }
+  }
+  if(RoomsExist(pos1, pos2 - 1, RoomArea) == true){
+    if(RoomArea[pos1, pos2 - 1].RoomClearanceLvl == ClearanceToFind){
+        FindPositions(pos1, pos2 - 1, 1, RoomArea);
+    }
+  }
+return (pos1, pos2);
+
+}

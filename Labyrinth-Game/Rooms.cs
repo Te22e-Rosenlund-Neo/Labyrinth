@@ -14,28 +14,4 @@ public Rooms(int RoomClearanceLvl, string name){
     this.RoomClearanceLvl = RoomClearanceLvl;
     RoomsName = name;
 }
-
-
-
-
-public static void RoomDescription(string RoomsName){
-
-    Console.WriteLine($"You Entered {RoomsName}");
-    Console.WriteLine(@"			top room
-
-
-
-	Left room			Right Room
-
-		
-			Bottom room");
-
-}
-
-
-
-
-
-
-
 }
