@@ -328,17 +328,19 @@ static Items[,] SpawnKeys(Items KeyOne, Items KeyTwo, Items ExitKey, int Startpo
 List<(int, int)> Positions1 = new List<(int, int)>();
 List<(int, int)> Positions2 = new List<(int, int)>();
 List<(int, int)> Positions3 = new List<(int, int)>();
-
+bool[,] Visited = new bool[7,7];
 
 //finds locations that the first key can spawn in, and randomizes its location
-Positions1.Add(FindPositions(Startpos1, Startpos2, 0, RoomArea)!.Value);
+Positions1.Add(FindPositions(Startpos1, Startpos2, 0, RoomArea, Visited));
 Positions1.RemoveAt(0);                                                             //key 1
 int RandLoc1 = Random.Shared.Next(0, Positions1.Count);
 KeyLocations[Positions1[RandLoc1].Item1, Positions1[RandLoc1].Item2] = KeyOne;
 
+
+
 //calls a new findpositions for each value in positions1
 foreach(var pos in Positions1){
-    Positions2.Add(FindPositions(pos.Item1, pos.Item2, 1, RoomArea)!.Value);
+    Positions2.Add(FindPositions(pos.Item1, pos.Item2, 1, RoomArea, Visited));
 }
 //we then remove all incorrect values that have been added as a result of calling with a position with that does not contain clearance 1
 for(int i = 0; i <= Positions2.Count; i++){
@@ -349,7 +351,9 @@ for(int i = 0; i <= Positions2.Count; i++){
 int RandLoc2 = Random.Shared.Next(0, Positions1.Count);
 KeyLocations[Positions2[RandLoc2].Item1, Positions2[RandLoc2].Item2] = KeyTwo;                //key 2
 
-//by the player simply having all key one and key two, key 3 can therefor spawn completely ranom in the maze as the entire maze can now be explored (apart from the one exit room)
+
+
+//by the player simply having key one and key two, key 3 can therefor spawn completely ranom in the maze as the entire maze can now be explored (apart from the one exit room)
 int RandlocX, RandlocY;
 do{
  RandlocX = Random.Shared.Next(0, RoomArea.GetLength(0));
@@ -363,28 +367,40 @@ return KeyLocations;
 
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-static (int, int)? FindPositions(int pos1, int pos2, int ClearanceToFind, Rooms[,] RoomArea){
+static (int, int) FindPositions(int pos1, int pos2, int ClearanceToFind, Rooms[,] RoomArea, bool[,] visited){
     
   if(RoomsExist(pos1 + 1, pos2, RoomArea) == true){
     if(RoomArea[pos1 + 1, pos2].RoomClearanceLvl == ClearanceToFind){
-       FindPositions(pos1 + 1, pos2, 1, RoomArea);
+        if(visited[pos1 + 1, pos2]){
+       FindPositions(pos1 + 1, pos2, 1, RoomArea, visited);
+       visited[pos1 + 1, pos2] = true;
+        }
     }
   }
   if(RoomsExist(pos1 - 1, pos2, RoomArea) == true){
     if(RoomArea[pos1 - 1, pos2].RoomClearanceLvl == ClearanceToFind){
-     FindPositions(pos1 - 1, pos2, 1, RoomArea);
+        if(visited[pos1 -1, pos2]){
+     FindPositions(pos1 - 1, pos2, 1, RoomArea, visited);
+     visited[pos1 - 1, pos2] = true;
+        }
     }
   }
   if(RoomsExist(pos1, pos2 + 1, RoomArea) == true){
     if(RoomArea[pos1, pos2 + 1].RoomClearanceLvl == ClearanceToFind){
-        FindPositions(pos1, pos2 + 1, 1, RoomArea);
+        if(visited[pos1, pos2 + 1]){
+        FindPositions(pos1, pos2 + 1, 1, RoomArea, visited);
+        visited[pos1, pos2 + 1] = true;
+        }
     }
   }
   if(RoomsExist(pos1, pos2 - 1, RoomArea) == true){
     if(RoomArea[pos1, pos2 - 1].RoomClearanceLvl == ClearanceToFind){
-        FindPositions(pos1, pos2 - 1, 1, RoomArea);
+        if(visited[pos1, pos2 - 1]){
+        FindPositions(pos1, pos2 - 1, 1, RoomArea, visited);
+        visited[pos1, pos2 - 1] = true;
+
+        }
     }
   }
-return (pos1, pos2);
-
+  return (pos1, pos2);
 }
