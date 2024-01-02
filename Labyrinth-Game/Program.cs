@@ -50,6 +50,13 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     bool Play = true;
     int CurrentClearance = 0;
 
+    KeyLocations = SpawnKeys(KeyOne, KeyTwo, ExitKey, Create.Item2, Create.Item3, RoomArea, KeyLocations, Create.Item4, Create.Item5);
+    
+    while(Play == true){
+        Console.Clear();
+        DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
+
+
     //prints out all rooms for dev to see
     for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
         for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
@@ -57,12 +64,6 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
         }
             Console.WriteLine();
     }
-
-    KeyLocations = SpawnKeys(KeyOne, KeyTwo, ExitKey, Create.Item2, Create.Item3, RoomArea, KeyLocations, Create.Item4, Create.Item5);
-    
-    while(Play == true){
-        // Console.Clear();
-        DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
 
         var Move = MoveCheck();
         int MoveX = CurrentPos1 + Move.Item1;
@@ -81,16 +82,21 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
         
         if(KeyLocations[CurrentPos1, CurrentPos2] == KeyOne){
             CurrentClearance = 1;
+            ChangeColour("You found Key 1!", "Green");
         }else if(KeyLocations[CurrentPos1, CurrentPos2] == KeyTwo){
             CurrentClearance = 2;
+            ChangeColour("You found Key 2!", "Green");
         }else if(KeyLocations[CurrentPos1, CurrentPos2] == ExitKey){
             CurrentClearance = 3;
+            ChangeColour("You found Key 3!", "Green");
         }
 
         if(RoomArea[CurrentPos1, CurrentPos2] == Exit){
             ChangeColour("You Escaped!", "Green");
             break;
         }
+
+        Thread.Sleep(2000);
     }
 
 
@@ -268,11 +274,11 @@ static int ClearanceCheck(int clearancelevel, Rooms[][] Clearances){
 static void DisplayRooms(Rooms[,] RoomArea, int p1, int p2){
 
 try{
-    Console.WriteLine("               " + RoomArea[p1-1,p2].RoomsName);
-    Console.Write(RoomArea[p1,p2-1].RoomsName);
+    Console.WriteLine("               " + RoomArea[p1,p2-1].RoomsName);
+    Console.Write(RoomArea[p1-1,p2].RoomsName);
     Console.Write("     ⚫     ");
-    Console.WriteLine(RoomArea[p1,p2+1].RoomsName);
-    Console.WriteLine("               " + RoomArea[p1+1,p2].RoomsName);
+    Console.WriteLine(RoomArea[p1+1,p2].RoomsName);
+    Console.WriteLine("               " + RoomArea[p1,p2+1].RoomsName);
 }catch(IndexOutOfRangeException){
     //does nothing, that exact statement will be skipped.
 }
@@ -284,19 +290,19 @@ static (int, int) MoveCheck(){
     string move = InputCheck();
 
     if(move == "W"){
-        var Movement = (-1, 0);
-        return Movement;
-
-    }else if(move == "A"){
         var Movement = (0, -1);
         return Movement;
 
+    }else if(move == "A"){
+        var Movement = (-1, 0);
+        return Movement;
+
     }else if(move == "S"){
-        var Movement = (1, 0);
+        var Movement = (0, 1);
         return Movement;
 
     }else if(move == "D"){
-        var Movement = (0, 1);
+        var Movement = (1, 0);
         return Movement;
 
     }else{
@@ -310,6 +316,7 @@ static string InputCheck(){
     string Input = "";
 
     do{
+        Console.WriteLine("");
         Console.WriteLine("Press a key to move (W, A, S, D)");
         Input = Console.ReadLine()!.ToUpper();
 
@@ -374,40 +381,48 @@ static List<(int, int)> FindPositions(int pos1, int pos2, int ClearanceToFind, R
 if(RoomsExist(pos1 + 1, pos2, RoomArea) == true){
     if(RoomArea[pos1 + 1, pos2].RoomClearanceLvl == ClearanceToFind){
         if(visited[pos1 + 1, pos2] == false){
+            if(Position.Contains((pos1+1, pos2)) == false){
             Console.WriteLine($"{pos1+1},{pos2} was added");
             visited[pos1+1, pos2] = true;
             Position.Add((pos1 + 1, pos2));
             FindPositions(pos1+1, pos2, ClearanceToFind, RoomArea, visited, Position);
+            }
         }
     }
 }
 if(RoomsExist(pos1 - 1, pos2, RoomArea) == true){
     if(RoomArea[pos1 - 1, pos2].RoomClearanceLvl == ClearanceToFind){
         if(visited[pos1 - 1, pos2] == false){
+            if(Position.Contains((pos1-1, pos2)) == false){
             Console.WriteLine($"{pos1-1},{pos2} was added");
             visited[pos1-1, pos2] = true;
             Position.Add((pos1 - 1, pos2));
             FindPositions(pos1-1, pos2, ClearanceToFind, RoomArea, visited, Position);
+            }
         }
     }
 }
 if(RoomsExist(pos1, pos2+1, RoomArea) == true){
     if(RoomArea[pos1, pos2+1].RoomClearanceLvl == ClearanceToFind){
         if(visited[pos1, pos2+1] == false){
+            if(Position.Contains((pos1, pos2+1)) == false){
             Console.WriteLine($"{pos1},{pos2+1} was added");
             visited[pos1, pos2+1] = true;
             Position.Add((pos1, pos2+1));
             FindPositions(pos1, pos2+1, ClearanceToFind, RoomArea, visited, Position);
+            }
         }
     }
 }
 if(RoomsExist(pos1, pos2-1, RoomArea) == true){
     if(RoomArea[pos1, pos2-1].RoomClearanceLvl == ClearanceToFind){
         if(visited[pos1, pos2-1] == false){
+            if(Position.Contains((pos1, pos2-1)) == false){
             Console.WriteLine($"{pos1},{pos2-1} was added");
             visited[pos1, pos2-1] = true;
             Position.Add((pos1, pos2-1));
             FindPositions(pos1, pos2-1, ClearanceToFind, RoomArea, visited, Position);
+            }
         }
     }
 }
