@@ -1,4 +1,6 @@
-﻿Console.OutputEncoding = System.Text.Encoding.UTF8;
+﻿using System.Diagnostics;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 //RoomArea is an array which houses our playing field, visisted is for bug/generation bug fixes
 Rooms[,] RoomArea = new Rooms[7,7];
 bool[,] visited = new bool[7,7];
@@ -48,10 +50,18 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     bool Play = true;
     int CurrentClearance = 0;
 
+    //prints out all rooms for dev to see
+    for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
+        for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
+            Console.Write($"{RoomArea[Xcolumn, Ycolumn].RoomClearanceLvl} ");
+        }
+            Console.WriteLine();
+    }
+
     KeyLocations = SpawnKeys(KeyOne, KeyTwo, ExitKey, Create.Item2, Create.Item3, RoomArea, KeyLocations, Create.Item4, Create.Item5);
     
     while(Play == true){
-        Console.Clear();
+        // Console.Clear();
         DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
 
         var Move = MoveCheck();
@@ -103,13 +113,7 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
 //        Console.WriteLine("");
 
-// //prints out all rooms for dev to see
-//     for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
-//         for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
-//             Console.Write($"{RoomArea[Xcolumn, Ycolumn].RoomClearanceLvl} ");
-//         }
-//             Console.WriteLine();
-//     }
+
  
  Console.ReadKey();
 
@@ -168,12 +172,15 @@ static (Rooms[,], int, int, int, int) RoomCreater(Rooms Start, Rooms Exit, Rooms
             if(RoomArea[x,y] == null){
                 if(MathF.Abs(x - StartX) == 1 || MathF.Abs(y - StartY) == 1 && DoOnce == true){
                     
-                    RoomArea[x,y] = RoomArea[x, y] = Clearances[1][Random.Shared.Next(0, Clearances[1].Length)];
+                    RoomArea[x,y] = RoomArea[x, y] = Clearances[0][Random.Shared.Next(0, Clearances[0].Length)];
                     visited[x, y] = true;
                     DoOnce = false;          
-            } else {
-                RoomArea[x, y] = Clearances[2][Random.Shared.Next(0, Clearances[2].Length)];
+            } else if(MathF.Abs(x - StartX) == 2 || MathF.Abs(y - StartY) == 2){
+                RoomArea[x, y] = Clearances[1][Random.Shared.Next(0, Clearances[1].Length)];
                  visited[x, y] = true;
+                }else if(MathF.Abs(x - StartX) > 2 || MathF.Abs(y - StartY) > 2){
+                    int RandomClearance = Random.Shared.Next(0, Clearances.Length);
+                    RoomArea[x, y] = Clearances[RandomClearance][Random.Shared.Next(0, Clearances[RandomClearance].Length)];
                 }
             }
     }
@@ -328,32 +335,26 @@ static Items[,] SpawnKeys(Items KeyOne, Items KeyTwo, Items ExitKey, int Startpo
 List<(int, int)> Positions1 = new List<(int, int)>();
 List<(int, int)> Positions2 = new List<(int, int)>();
 List<(int, int)> Positions3 = new List<(int, int)>();
-bool[,] Visited = new bool[7,7];
 
 //finds locations that the first key can spawn in, and randomizes its location
-Positions1.Add(FindPositions(Startpos1, Startpos2, 0, RoomArea, Visited));
-Positions1.RemoveAt(0);                                                             //key 1
+bool[,] Visited = new bool[7,7];
+Positions1 = FindPositions(Startpos1, Startpos2, 0, RoomArea, Visited, Positions1);                                                        //key 1
 int RandLoc1 = Random.Shared.Next(0, Positions1.Count);
 KeyLocations[Positions1[RandLoc1].Item1, Positions1[RandLoc1].Item2] = KeyOne;
 
 
 
 //calls a new findpositions for each value in positions1
-foreach(var pos in Positions1){
-    Positions2.Add(FindPositions(pos.Item1, pos.Item2, 1, RoomArea, Visited));
-}
-//we then remove all incorrect values that have been added as a result of calling with a position with that does not contain clearance 1
-for(int i = 0; i <= Positions2.Count; i++){
-    if(RoomArea[Positions1[i].Item1, Positions1[i].Item2].RoomClearanceLvl == 0){
-        Positions1.RemoveAt(i);
-    }
+bool[,] Visited1 = new bool[7,7];
+foreach((int, int) pos in Positions1){
+    Positions2 = FindPositions(pos.Item1, pos.Item2, 1, RoomArea, Visited1, Positions2);
 }
 int RandLoc2 = Random.Shared.Next(0, Positions1.Count);
 KeyLocations[Positions2[RandLoc2].Item1, Positions2[RandLoc2].Item2] = KeyTwo;                //key 2
 
 
 
-//by the player simply having key one and key two, key 3 can therefor spawn completely ranom in the maze as the entire maze can now be explored (apart from the one exit room)
+// //by the player simply having key one and key two, key 3 can therefor spawn completely ranom in the maze as the entire maze can now be explored (apart from the one exit room)
 int RandlocX, RandlocY;
 do{
  RandlocX = Random.Shared.Next(0, RoomArea.GetLength(0));
@@ -367,40 +368,48 @@ return KeyLocations;
 
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-static (int, int) FindPositions(int pos1, int pos2, int ClearanceToFind, Rooms[,] RoomArea, bool[,] visited){
-    
-  if(RoomsExist(pos1 + 1, pos2, RoomArea) == true){
-    if(RoomArea[pos1 + 1, pos2].RoomClearanceLvl == ClearanceToFind){
-        if(visited[pos1 + 1, pos2]){
-       FindPositions(pos1 + 1, pos2, 1, RoomArea, visited);
-       visited[pos1 + 1, pos2] = true;
-        }
-    }
-  }
-  if(RoomsExist(pos1 - 1, pos2, RoomArea) == true){
-    if(RoomArea[pos1 - 1, pos2].RoomClearanceLvl == ClearanceToFind){
-        if(visited[pos1 -1, pos2]){
-     FindPositions(pos1 - 1, pos2, 1, RoomArea, visited);
-     visited[pos1 - 1, pos2] = true;
-        }
-    }
-  }
-  if(RoomsExist(pos1, pos2 + 1, RoomArea) == true){
-    if(RoomArea[pos1, pos2 + 1].RoomClearanceLvl == ClearanceToFind){
-        if(visited[pos1, pos2 + 1]){
-        FindPositions(pos1, pos2 + 1, 1, RoomArea, visited);
-        visited[pos1, pos2 + 1] = true;
-        }
-    }
-  }
-  if(RoomsExist(pos1, pos2 - 1, RoomArea) == true){
-    if(RoomArea[pos1, pos2 - 1].RoomClearanceLvl == ClearanceToFind){
-        if(visited[pos1, pos2 - 1]){
-        FindPositions(pos1, pos2 - 1, 1, RoomArea, visited);
-        visited[pos1, pos2 - 1] = true;
+static List<(int, int)> FindPositions(int pos1, int pos2, int ClearanceToFind, Rooms[,] RoomArea, bool[,] visited, List<(int, int)> Position){
 
+
+if(RoomsExist(pos1 + 1, pos2, RoomArea) == true){
+    if(RoomArea[pos1 + 1, pos2].RoomClearanceLvl == ClearanceToFind){
+        if(visited[pos1 + 1, pos2] == false){
+            Console.WriteLine($"{pos1+1},{pos2} was added");
+            visited[pos1+1, pos2] = true;
+            Position.Add((pos1 + 1, pos2));
+            FindPositions(pos1+1, pos2, ClearanceToFind, RoomArea, visited, Position);
         }
     }
-  }
-  return (pos1, pos2);
+}
+if(RoomsExist(pos1 - 1, pos2, RoomArea) == true){
+    if(RoomArea[pos1 - 1, pos2].RoomClearanceLvl == ClearanceToFind){
+        if(visited[pos1 - 1, pos2] == false){
+            Console.WriteLine($"{pos1-1},{pos2} was added");
+            visited[pos1-1, pos2] = true;
+            Position.Add((pos1 - 1, pos2));
+            FindPositions(pos1-1, pos2, ClearanceToFind, RoomArea, visited, Position);
+        }
+    }
+}
+if(RoomsExist(pos1, pos2+1, RoomArea) == true){
+    if(RoomArea[pos1, pos2+1].RoomClearanceLvl == ClearanceToFind){
+        if(visited[pos1, pos2+1] == false){
+            Console.WriteLine($"{pos1},{pos2+1} was added");
+            visited[pos1, pos2+1] = true;
+            Position.Add((pos1, pos2+1));
+            FindPositions(pos1, pos2+1, ClearanceToFind, RoomArea, visited, Position);
+        }
+    }
+}
+if(RoomsExist(pos1, pos2-1, RoomArea) == true){
+    if(RoomArea[pos1, pos2-1].RoomClearanceLvl == ClearanceToFind){
+        if(visited[pos1, pos2-1] == false){
+            Console.WriteLine($"{pos1},{pos2-1} was added");
+            visited[pos1, pos2-1] = true;
+            Position.Add((pos1, pos2-1));
+            FindPositions(pos1, pos2-1, ClearanceToFind, RoomArea, visited, Position);
+        }
+    }
+}
+return Position;
 }
