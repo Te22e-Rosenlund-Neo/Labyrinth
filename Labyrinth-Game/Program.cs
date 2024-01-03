@@ -9,21 +9,21 @@ Items[,] KeyLocations = new Items[7,7];
 //here we declare a bunch of objects of type rooms that we later randomize from
 //first parameter is the clearance level, which the player needs a key corresponding to the same clearance level to access
 Rooms Start = new(-1, "Start");    
-Rooms Corridor = new(0,"Corridor"); 
+Rooms Corridor = new(0,"Corridor(0)"); 
 Rooms[] Clearance0 = {Corridor};
 
-Rooms Kitchen = new(1,"Kitchen"); 
-Rooms Bedroom = new(1,"Bedroom"); 
-Rooms BathingHall = new(1,"BathingHall"); 
-Rooms Library = new(1,"Library"); 
+Rooms Kitchen = new(1,"Kitchen(1)"); 
+Rooms Bedroom = new(1,"Bedroom(1)"); 
+Rooms BathingHall = new(1,"BathingHall(1)"); 
+Rooms Library = new(1,"Library(1)"); 
 Rooms[] Clearance1 = {Kitchen, Bedroom, BathingHall, Library};
 
-Rooms TortureChamber = new(2,"TortureChamber"); 
-Rooms MainHall = new(2,"MainHall"); 
-Rooms BathRoom = new(2,"BathRoom"); 
+Rooms TortureChamber = new(2,"TortureChamber(2)"); 
+Rooms MainHall = new(2,"MainHall(2)"); 
+Rooms BathRoom = new(2,"BathRoom(2)"); 
 Rooms[] Clearance2 = {TortureChamber, MainHall, BathRoom};
 
-Rooms Garden = new(3,"Garden"); 
+Rooms Garden = new(3,"Garden(3)"); 
 //this array lets us randomly pick one of the 3 types of rooms to randomly generate
 Rooms[][] Clearances = {Clearance0, Clearance1, Clearance2};
 
@@ -40,35 +40,28 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
 
 
-
+    //creates all rooms and sets players position to be the start room
     var Create = RoomCreater(Start, Exit, RoomArea, Clearances, visited);
     RoomArea = Create.Item1;
     int CurrentPos1 = Create.Item2;
     int CurrentPos2 = Create.Item3;
 
-    DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
+    //sets play loop, but you cant play infinite amount of times
     bool Play = true;
     int CurrentClearance = 0;
 
+    //spawns all keys
     KeyLocations = SpawnKeys(KeyOne, KeyTwo, ExitKey, Create.Item2, Create.Item3, RoomArea, KeyLocations, Create.Item4, Create.Item5);
     
     while(Play == true){
         Console.Clear();
         DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
 
-
-    //prints out all rooms for dev to see
-    for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
-        for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
-            Console.Write($"{RoomArea[Xcolumn, Ycolumn].RoomClearanceLvl} ");
-        }
-            Console.WriteLine();
-    }
-
+        //returns a direction that the player chose to move
         var Move = MoveCheck();
         int MoveX = CurrentPos1 + Move.Item1;
         int MoveY = CurrentPos2 + Move.Item2;
-        //both can be noted as true as only one changes, and therefor the other is the one we are currently on and does therefor exist!
+        //Checks if the room/direction that the player moved towards exists and that the player is allowed to enter it
         if(RoomsExist( MoveX , CurrentPos2, RoomArea) == true && RoomsExist(CurrentPos1, MoveY, RoomArea) == true){
             if(CurrentClearance >= RoomArea[MoveX, CurrentPos2].RoomClearanceLvl     &&  CurrentClearance >= RoomArea[CurrentPos1, MoveY].RoomClearanceLvl){
                 CurrentPos1 += Move.Item1;
@@ -79,18 +72,23 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
         }else{
             ChangeColour("You cannot move this way!", "Red");
         }
-        
+    
+    //checks if where the player is, is at a loction with a key, if so increases players clearance level and removes the key
         if(KeyLocations[CurrentPos1, CurrentPos2] == KeyOne){
             CurrentClearance = 1;
             ChangeColour("You found Key 1!", "Green");
+            KeyLocations[CurrentPos1, CurrentPos2] = null!;
         }else if(KeyLocations[CurrentPos1, CurrentPos2] == KeyTwo){
             CurrentClearance = 2;
             ChangeColour("You found Key 2!", "Green");
+            KeyLocations[CurrentPos1, CurrentPos2] = null!;
         }else if(KeyLocations[CurrentPos1, CurrentPos2] == ExitKey){
             CurrentClearance = 3;
             ChangeColour("You found Key 3!", "Green");
+            KeyLocations[CurrentPos1, CurrentPos2] = null!;
         }
 
+    //if player entered the exit
         if(RoomArea[CurrentPos1, CurrentPos2] == Exit){
             ChangeColour("You Escaped!", "Green");
             break;
@@ -104,7 +102,13 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
 
 
-
+ //prints out all rooms for dev to see
+    // for(int Ycolumn = 0; Ycolumn<RoomArea.GetLength(1); Ycolumn++){
+    //     for(int Xcolumn = 0; Xcolumn < RoomArea.GetLength(0); Xcolumn++){
+    //         Console.Write($"{RoomArea[Xcolumn, Ycolumn].RoomClearanceLvl} ");
+    //     }
+    //         Console.WriteLine();
+    // }
 
 
 
@@ -145,8 +149,8 @@ static (Rooms[,], int, int, int, int) RoomCreater(Rooms Start, Rooms Exit, Rooms
     RoomArea = SpawnRoomsBetween(Exit1, Exit2, Start1, Start2, RoomArea, Clearances, visited);
     RoomArea = SpawnRoomsBeside(RoomArea, Clearances, Start1, Start2, 0, visited);
     
-    var R = (RoomArea, Start1, Start2, Exit1, Exit2);
-    return R;
+    var Retur = (RoomArea, Start1, Start2, Exit1, Exit2);
+    return Retur;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     	//Spawns a path of rooms between Start and Exit
@@ -174,7 +178,7 @@ static (Rooms[,], int, int, int, int) RoomCreater(Rooms Start, Rooms Exit, Rooms
             int x = position.Item1;
             int y = position.Item2;
             
-
+            //we then set the first two rooms to garuantee escapability, then the rest in the list/queue is random
             if(RoomArea[x,y] == null){
                 if(MathF.Abs(x - StartX) == 1 || MathF.Abs(y - StartY) == 1 && DoOnce == true){
                     
@@ -257,7 +261,7 @@ if(x >= 0 && x < RoomArea.GetLength(0) && y >= 0 && y < RoomArea.GetLength(1)){
 }
 }
 //-------------------------------------------------------------------------------------------------------------------------
-//checks if designated clearance level exists inside clearances array.
+//checks if designated clearance level exists inside clearances array(when generating maze).
 static int ClearanceCheck(int clearancelevel, Rooms[][] Clearances){
 
     if(clearancelevel > Clearances.Length-1){
@@ -272,23 +276,37 @@ static int ClearanceCheck(int clearancelevel, Rooms[][] Clearances){
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 static void DisplayRooms(Rooms[,] RoomArea, int p1, int p2){
-
-try{
-    Console.WriteLine("               " + RoomArea[p1,p2-1].RoomsName);
-    Console.Write(RoomArea[p1-1,p2].RoomsName);
-    Console.Write("     ⚫     ");
-    Console.WriteLine(RoomArea[p1+1,p2].RoomsName);
-    Console.WriteLine("               " + RoomArea[p1,p2+1].RoomsName);
-}catch(IndexOutOfRangeException){
-    //does nothing, that exact statement will be skipped.
+    //here we first check if there is a room in all directions to display, if so we print out the rooms name. black dot represents our player
+bool up, down, left, right;
+if(RoomsExist(p1, p2-1, RoomArea) == true)  up = true; else{
+    up = false;
 }
+if(RoomsExist(p1-1, p2, RoomArea) == true)  left = true;else{
+    left = false;
+}
+if(RoomsExist(p1+1, p2, RoomArea) == true)  right = true;else{
+    right = false;
+}
+if(RoomsExist(p1, p2+1, RoomArea) == true)  down = true;else{
+    down = false;
+}
+
+if(up == true) Console.WriteLine("               " + RoomArea[p1,p2-1].RoomsName);
+if(left == true) Console.Write(RoomArea[p1-1,p2].RoomsName);
+Console.Write("     ⚫     ");
+if(right == true) Console.Write(RoomArea[p1+1,p2].RoomsName);
+if(down == true) Console.WriteLine("\n               " + RoomArea[p1,p2+1].RoomsName);
+
+
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 static (int, int) MoveCheck(){
 
+    //first we check if input is correct
     string move = InputCheck();
-
+    //then depending on which key was pressed, we give a direction in a form of a tuple in which our positions will try to go towards
     if(move == "W"){
         var Movement = (0, -1);
         return Movement;
@@ -312,9 +330,11 @@ static (int, int) MoveCheck(){
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 static string InputCheck(){
+    //we check if input is possible
     string[] InputType = {"W","A","S","D"};
     string Input = "";
 
+//prompts the user at least once to enter a key, if wrong key we prompt again
     do{
         Console.WriteLine("");
         Console.WriteLine("Press a key to move (W, A, S, D)");
@@ -326,6 +346,7 @@ return Input;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 static void ChangeColour(string Sentence, string Colour){
+    //simple function that changes texts color for better visualisation
 if(Colour == "Red"){
     Console.ForegroundColor = ConsoleColor.Red;
     Console.WriteLine(Sentence);
@@ -351,12 +372,12 @@ KeyLocations[Positions1[RandLoc1].Item1, Positions1[RandLoc1].Item2] = KeyOne;
 
 
 
-//calls a new findpositions for each value in positions1
+//calls a new findpositions for each value in positions1, then randomises its position, in this case we are searching for 1's
 bool[,] Visited1 = new bool[7,7];
 foreach((int, int) pos in Positions1){
     Positions2 = FindPositions(pos.Item1, pos.Item2, 1, RoomArea, Visited1, Positions2);
 }
-int RandLoc2 = Random.Shared.Next(0, Positions1.Count);
+int RandLoc2 = Random.Shared.Next(0, Positions2.Count);
 KeyLocations[Positions2[RandLoc2].Item1, Positions2[RandLoc2].Item2] = KeyTwo;                //key 2
 
 
@@ -377,7 +398,9 @@ return KeyLocations;
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 static List<(int, int)> FindPositions(int pos1, int pos2, int ClearanceToFind, Rooms[,] RoomArea, bool[,] visited, List<(int, int)> Position){
 
-
+//when trying to place our key, we need to ensure that the key will always be accessible to the player, therefor this recursive function which works similar to BFS
+//finds a the cluster of rooms with a designated clearancecode that is directly linked to the start or given position
+//first we see if the rooms existsm then if it the correct clearance, then if it already has been visited, and then if that position already has been added
 if(RoomsExist(pos1 + 1, pos2, RoomArea) == true){
     if(RoomArea[pos1 + 1, pos2].RoomClearanceLvl == ClearanceToFind){
         if(visited[pos1 + 1, pos2] == false){
