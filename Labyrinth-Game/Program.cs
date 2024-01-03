@@ -53,6 +53,11 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     //spawns all keys
     KeyLocations = SpawnKeys(KeyOne, KeyTwo, ExitKey, Create.Item2, Create.Item3, RoomArea, KeyLocations, Create.Item4, Create.Item5);
     
+
+    Console.WriteLine("Welcome, you are locked inside a maze and you need to escape");
+    Console.WriteLine("you move with WASD");
+    Console.WriteLine("You cannot enter rooms without having the proper key, displayed by a number.");
+    Thread.Sleep(6000);
     while(Play == true){
         Console.Clear();
         DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
@@ -291,11 +296,11 @@ if(RoomsExist(p1, p2+1, RoomArea) == true)  down = true;else{
     down = false;
 }
 
-if(up == true) Console.WriteLine("               " + RoomArea[p1,p2-1].RoomsName);
+if(up == true) Console.WriteLine("           " + RoomArea[p1,p2-1].RoomsName);
 if(left == true) Console.Write(RoomArea[p1-1,p2].RoomsName);
 Console.Write("     ⚫     ");
 if(right == true) Console.Write(RoomArea[p1+1,p2].RoomsName);
-if(down == true) Console.WriteLine("\n               " + RoomArea[p1,p2+1].RoomsName);
+if(down == true) Console.WriteLine("\n           " + RoomArea[p1,p2+1].RoomsName);
 
 
 }
@@ -405,7 +410,6 @@ if(RoomsExist(pos1 + 1, pos2, RoomArea) == true){
     if(RoomArea[pos1 + 1, pos2].RoomClearanceLvl == ClearanceToFind){
         if(visited[pos1 + 1, pos2] == false){
             if(Position.Contains((pos1+1, pos2)) == false){
-            Console.WriteLine($"{pos1+1},{pos2} was added");
             visited[pos1+1, pos2] = true;
             Position.Add((pos1 + 1, pos2));
             FindPositions(pos1+1, pos2, ClearanceToFind, RoomArea, visited, Position);
@@ -417,7 +421,6 @@ if(RoomsExist(pos1 - 1, pos2, RoomArea) == true){
     if(RoomArea[pos1 - 1, pos2].RoomClearanceLvl == ClearanceToFind){
         if(visited[pos1 - 1, pos2] == false){
             if(Position.Contains((pos1-1, pos2)) == false){
-            Console.WriteLine($"{pos1-1},{pos2} was added");
             visited[pos1-1, pos2] = true;
             Position.Add((pos1 - 1, pos2));
             FindPositions(pos1-1, pos2, ClearanceToFind, RoomArea, visited, Position);
@@ -429,7 +432,6 @@ if(RoomsExist(pos1, pos2+1, RoomArea) == true){
     if(RoomArea[pos1, pos2+1].RoomClearanceLvl == ClearanceToFind){
         if(visited[pos1, pos2+1] == false){
             if(Position.Contains((pos1, pos2+1)) == false){
-            Console.WriteLine($"{pos1},{pos2+1} was added");
             visited[pos1, pos2+1] = true;
             Position.Add((pos1, pos2+1));
             FindPositions(pos1, pos2+1, ClearanceToFind, RoomArea, visited, Position);
@@ -441,7 +443,6 @@ if(RoomsExist(pos1, pos2-1, RoomArea) == true){
     if(RoomArea[pos1, pos2-1].RoomClearanceLvl == ClearanceToFind){
         if(visited[pos1, pos2-1] == false){
             if(Position.Contains((pos1, pos2-1)) == false){
-            Console.WriteLine($"{pos1},{pos2-1} was added");
             visited[pos1, pos2-1] = true;
             Position.Add((pos1, pos2-1));
             FindPositions(pos1, pos2-1, ClearanceToFind, RoomArea, visited, Position);
