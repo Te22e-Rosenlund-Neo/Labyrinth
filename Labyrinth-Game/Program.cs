@@ -60,6 +60,8 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     Thread.Sleep(6000);
     while(Play == true){
         Console.Clear();
+        
+
         DisplayRooms(RoomArea, CurrentPos1, CurrentPos2);
 
         //returns a direction that the player chose to move
@@ -177,6 +179,7 @@ static (Rooms[,], int, int, int, int) RoomCreater(Rooms Start, Rooms Exit, Rooms
             currentY += MathF.Sign(ExitY - currentY);
             path.Add((currentX,currentY));
         }
+    
     //bool doOnce makes the first connected room be garuanteed a 1, after that they become 2's
         bool DoOnce = true;
         foreach(var position in path){
@@ -184,6 +187,7 @@ static (Rooms[,], int, int, int, int) RoomCreater(Rooms Start, Rooms Exit, Rooms
             int y = position.Item2;
             
             //we then set the first two rooms to garuantee escapability, then the rest in the list/queue is random
+            //can be made better with RoomArea[path[0].Item1, path[0].Item2] = Clearances[0][Random.Shared.Next(0, Clearances[0].Length)];
             if(RoomArea[x,y] == null){
                 if(MathF.Abs(x - StartX) == 1 || MathF.Abs(y - StartY) == 1 && DoOnce == true){
                     
