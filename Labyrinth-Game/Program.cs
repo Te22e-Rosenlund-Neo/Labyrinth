@@ -48,7 +48,7 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
     //sets play loop, but you cant play infinite amount of times
     bool Play = true;
-    int CurrentClearance = 0;
+    int CurrentClearance = (int)0f;
 
     //spawns all keys
     KeyLocations = SpawnKeys(KeyOne, KeyTwo, ExitKey, Create.Item2, Create.Item3, RoomArea, KeyLocations, Create.Item4, Create.Item5);
@@ -101,9 +101,8 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
             break;
         }
 
-        Thread.Sleep(2000);
+        Thread.Sleep(1000);
     }
-
 
 
 
@@ -392,13 +391,17 @@ KeyLocations[Positions2[RandLoc2].Item1, Positions2[RandLoc2].Item2] = KeyTwo;  
 
 
 // //by the player simply having key one and key two, key 3 can therefor spawn completely ranom in the maze as the entire maze can now be explored (apart from the one exit room)
-int RandlocX, RandlocY;
-do{
- RandlocX = Random.Shared.Next(0, RoomArea.GetLength(0));
- RandlocY = Random.Shared.Next(0, RoomArea.GetLength(1));
+
+for(int i = 0; i<RoomArea.GetLength(0); i++){
+    for(int j = 0; j<RoomArea.GetLength(1); j++){
+        if(RoomArea[i,j].RoomClearanceLvl == 2){
+            Positions3.Add((i,j));
+        }
+    }
+}
+int RandLoc3 = Random.Shared.Next(0, Positions3.Count);
+KeyLocations[Positions3[RandLoc3].Item1, Positions3[RandLoc3].Item2] = ExitKey;
  //does that while those positions is at the keyone or keytwo position or whilst it is at the exit rooms coordinates
-}while((RandlocX == Positions1[RandLoc1].Item1 && RandlocY == Positions1[RandLoc1].Item2) || (RandlocX == Positions2[RandLoc2].Item1 && RandlocY == Positions1[RandLoc2].Item2) || (RandlocX == Exit1 && RandlocY == Exit2));
-KeyLocations[RandlocX,RandlocY] = ExitKey;
 
 return KeyLocations;
 }
@@ -456,3 +459,4 @@ if(RoomsExist(pos1, pos2-1, RoomArea) == true){
 }
 return Position;
 }
+
