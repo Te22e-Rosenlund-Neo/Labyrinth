@@ -57,7 +57,8 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
     Console.WriteLine("Welcome, you are locked inside a maze and you need to escape");
     Console.WriteLine("you move with WASD");
     Console.WriteLine("You cannot enter rooms without having the proper key, displayed by a number.");
-    Thread.Sleep(6000);
+    Console.WriteLine("Clarification: You need key 1 to enter rooms with a (1), key 2 to enter (2) and so on. Garden(3) is the escape room");
+    Thread.Sleep(8000);
     while(Play == true){
         Console.Clear();
         
@@ -103,6 +104,8 @@ static void Main(Rooms[,] RoomArea, Rooms Start, Rooms Exit, Rooms[][]Clearances
 
         Thread.Sleep(1000);
     }
+Thread.Sleep(10000);
+Environment.Exit(0);
 
 
 
